@@ -1,0 +1,163 @@
+BEGIN PRODUCT
+CODE 401281        # a unique product code: int
+NAME milk          # the name of the product: str
+CATEGORY dairy     # the product category (e.g. bakery, meat, produce): str
+PRICE 1.05         # the price of the product in €: float
+STOCK 120          # the quantiry of the items in stock: int
+END PRODUCT
+
+# Empty lines and comment lines are also allowed.
+
+BEGIN PRODUCT
+CODE 554925        # yksikäsitteinen tuotekoodi: int
+NAME chicken wings # tuotteen nimi: str
+CATEGORY meat      # tuotekategoria (esim. dairy (maito), meat (liha) jne.): str
+PRICE 3.19         # hinta €uroina: float
+STOCK 77           # kuinka paljon tuotetta on varastossa: int
+END PRODUCT
+
+# Tyhjät rivit ja kommenttirivit ovat myös sallittuja.
+
+BEGIN PRODUCT
+CODE 129372
+NAME french bread
+CATEGORY bakery
+PRICE 1.90
+STOCK 32
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 691021
+NAME Coca Cola 1/2 l
+CATEGORY drink
+PRICE 1.75
+STOCK 4712
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 125467
+NAME bagel
+CATEGORY bakery
+PRICE 0.89
+STOCK 279
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 558234
+NAME chicken fried steaks
+CATEGORY meat
+PRICE 6.99
+STOCK 89
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 207457
+NAME cabbage
+CATEGORY produce
+PRICE 0.95
+STOCK 658
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 207578
+NAME carrot
+CATEGORY produce
+PRICE 1.05
+STOCK 191
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 407536
+NAME yogurt
+CATEGORY dairy
+PRICE 1.90
+STOCK 22
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 994578
+NAME pineaple
+CATEGORY fruit
+PRICE 2.95
+STOCK 47
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 558234
+NAME chicken fried steaks
+CATEGORY meat
+PRICE 6.99
+STOCK 900
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 201846
+NAME sweet onion
+CATEGORY produce
+PRICE 0.89
+STOCK 1847
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 373322
+NAME LEGO minifigure set
+CATEGORY toy
+PRICE 99.99
+STOCK 13
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 551928
+NAME organic ground beef-pork mix 50/50
+CATEGORY meat
+PRICE 4.25
+STOCK 45
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 150001
+NAME Mars bar
+CATEGORY candy
+PRICE 0.78
+STOCK 12578
+END PRODUCT
+
+BEGIN PRODUCT
+CODE 691022
+NAME Coca Cola 1/2 l christmas special bottle
+CATEGORY drink
+PRICE 1.75
+STOCK 88
+END PRODUCT
+
+BEGIN PRODUCT
+STOCK 11
+PRICE 6.99
+CATEGORY meat
+NAME chicken fried steaks
+CODE 558234
+END PRODUCT
+
+BEGIN PRODUCT
+STOCK 123
+PRICE 7.99
+CATEGORY meat
+NAME chicken fried steaks deluxe
+CODE 558235
+END PRODUCT
+
+BEGIN PRODUCT
+STOCK 82
+PRICE 2.95
+CATEGORY nuts
+NAME macadamia nuts
+CODE 993747
+END PRODUCT
+
+# BEGIN PRODUCT
+# CODE
+# NAME
+# CATEGORY
+# PRICE
+# STOCK
+# END PRODUCT
