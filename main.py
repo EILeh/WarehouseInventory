@@ -39,8 +39,8 @@ class Product:
         YOU SHOULD NOT MODIFY THIS METHOD or it will mess up
         the automated tests.
         """
-
         lines = [
+
             f"Code:     {self.__code}",
             f"Name:     {self.__name}",
             f"Category: {self.__category}",
@@ -52,6 +52,33 @@ class Product:
 
         for i in range(len(lines)):
             lines[i] = f"| {lines[i]:{longest_line}} |"
+
+        solid_line = "+" + "-" * (longest_line + 2) + "+"
+        lines.insert(0, solid_line)
+        lines.append(solid_line)
+
+        return "\n".join(lines)
+
+    def print_with_parameters(self, product_code):
+
+        # Halutaan tulostaa vain ne tiedot, jotka löytyvät product_coden "takaa"
+
+        # for product_code in
+
+        lines = [
+
+            f"Code:     {self.__code}",
+            f"Name:     {self.__name}",
+            f"Category: {self.__category}",
+            f"Price:    {self.__price:.2f}€",
+            f"Stock:    {self.__stock} units",
+        ]
+
+        longest_line = len(max(lines, key=len))
+
+        for i in range(len(lines)):
+            if lines[i] == product_code:
+                lines[i] = f"| {lines[i]:{longest_line}} |"
 
         solid_line = "+" + "-" * (longest_line + 2) + "+"
         lines.insert(0, solid_line)
@@ -289,6 +316,12 @@ def example_function_for_example_purposes(warehouse, parameters):
     print(f"Parameters are: {code=} and {number=}.")
 
 
+def limit_values_to_a_desired_product(warehouse, parameters):
+    for key, word in warehouse.items():
+        if parameters == word:
+            print(f"word {word} , parameters {parameters}")
+
+
 def main():
 #    filename = input("Enter database name: ")
     filename = "simpleproducts.txt"
@@ -338,13 +371,12 @@ def main():
 
         elif "print".startswith(command) and parameters == "":
 
-            for key, payload in sorted(warehouse.items()):
-                print(payload)
+            for key, product in sorted(warehouse.items()):
+                print(product)
 
         elif "print".startswith(command) and parameters != "":
-            # TODO: Implement print command to print a single
-            #       product when the product code is given.
-            ...
+
+            limit_values_to_a_desired_product(warehouse, parameters)
 
         elif "delete".startswith(command) and parameters != "":
             # TODO: Implement delete command for removing
