@@ -181,7 +181,6 @@ def read_database(filename):
     :return: dict[int, Product] | None
     """
 
-
     # MUISTA POISTAA SEURAAVA KOMMENTTI!!!!!!!!
     """
     Tämä koodi lukee tiedoston nimeltä filename, joka sisältää tietoja tuotteista. 
@@ -210,7 +209,8 @@ def read_database(filename):
 
                 lines = _read_lines_until(fd, "END PRODUCT")
                 if lines is None:
-                    print(f"Error: premature end of file while reading '{filename}'.")
+                    print(
+                        f"Error: premature end of file while reading '{filename}'.")
                     return None
 
                 # print(f"TEST: {lines=}")
@@ -218,7 +218,8 @@ def read_database(filename):
                 collected_product_info = {}
 
                 for line in lines:
-                    keyword, value = line.split(maxsplit=1)  # ValueError possible
+                    keyword, value = line.split(
+                        maxsplit=1)  # ValueError possible
 
                     # print(f"TEST: {keyword=} {value=}")
 
@@ -238,7 +239,8 @@ def read_database(filename):
                     collected_product_info[keyword] = value
 
                 if len(collected_product_info) < 5:
-                    print(f"Error: a product block is missing one or more data lines.")
+                    print(
+                        f"Error: a product block is missing one or more data lines.")
                     return None
 
                 product_code = collected_product_info["CODE"]
@@ -260,7 +262,8 @@ def read_database(filename):
                         data[product_code].modify_stock_size(product_stock)
 
                     else:
-                        print(f"Error: product code '{product_code}' conflicting data.")
+                        print(
+                            f"Error: product code '{product_code}' conflicting data.")
                         return None
 
                 else:
@@ -316,8 +319,16 @@ def example_function_for_example_purposes(warehouse, parameters):
     print(f"Parameters are: {code=} and {number=}.")
 
 
-def limit_values_to_a_desired_product(warehouse, str_product_id):
+def is_product_found(warehouse, product_id):
 
+    if product_id not in warehouse:
+        return False
+
+    return True
+
+
+
+def limit_values_to_a_desired_product(warehouse, str_product_id):
     product_id = 0
 
     try:
@@ -329,9 +340,10 @@ def limit_values_to_a_desired_product(warehouse, str_product_id):
             f"not exist.")
         return
 
-    if product_id not in warehouse:
-        print(f"Error: product '{str_product_id}' can not be printed as it does "
-              f"not exist.")
+    if not is_product_found(warehouse, product_id):
+        print(
+            f"Error: product '{product_id}' can not be printed as it does "
+            f"not exist.")
         return
 
     for key, word in warehouse.items():
@@ -339,8 +351,26 @@ def limit_values_to_a_desired_product(warehouse, str_product_id):
             print(word)
 
 
+def change(warehouse, parameters):
+
+    splitted_parameters = parameters.split()
+
+    product_id = int(splitted_parameters[0])
+    amount_of_change = int(splitted_parameters[1])
+
+    if not is_product_found(warehouse, product_id):
+        print(f"Error: stock for '{product_id}' can not be changed as it does not "
+              f"exist.")
+        return
+
+    for key, word in warehouse.items():
+        if product_id == key:
+            word.modify_stock_size(amount_of_change)
+
+
 def main():
-#    filename = input("Enter database name: ")
+    # filename = input("Enter database name: ")
+
     filename = "simpleproducts.txt"
     # filename = "products.txt"
 
@@ -401,10 +431,8 @@ def main():
             ...
 
         elif "change".startswith(command) and parameters != "":
-            # TODO: Implement change command which allows
-            #       the user to modify the amount of a product
-            #       in stock.
-            ...
+            change(warehouse, parameters)
+
 
         elif "low".startswith(command) and parameters == "":
             # TODO: Implement low command which can be used to
