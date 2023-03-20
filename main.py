@@ -316,10 +316,27 @@ def example_function_for_example_purposes(warehouse, parameters):
     print(f"Parameters are: {code=} and {number=}.")
 
 
-def limit_values_to_a_desired_product(warehouse, parameters):
+def limit_values_to_a_desired_product(warehouse, str_product_id):
+
+    product_id = 0
+
+    try:
+        product_id = int(str_product_id)
+
+    except ValueError:
+        print(
+            f"Error: product '{str_product_id}' can not be printed as it does "
+            f"not exist.")
+        return
+
+    if product_id not in warehouse:
+        print(f"Error: product '{str_product_id}' can not be printed as it does "
+              f"not exist.")
+        return
+
     for key, word in warehouse.items():
-        if parameters == word:
-            print(f"word {word} , parameters {parameters}")
+        if product_id == key:
+            print(word)
 
 
 def main():
@@ -349,7 +366,7 @@ def main():
         # If you have trouble undestanding what the values
         # in the variables <command> and <parameters> are,
         # remove the '#' comment character from the next line.
-            print(f"TEST: {command=} {parameters=}")
+        #    print(f"TEST: {command=} {parameters=}")
 
         if "example".startswith(command) and parameters != "":
             """
