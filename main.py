@@ -320,6 +320,13 @@ def example_function_for_example_purposes(warehouse, parameters):
 
 
 def is_product_found(warehouse, product_id):
+    """
+    This function checks if a desired product is found in the warehouse
+    dictionary.
+    :param warehouse: dict, stores product_id-product_object pairs
+    :param product_id: integer, the product_id of the desired product
+    :return: boolean, the answer to the question "was product found"
+    """
 
     if product_id not in warehouse:
         return False
@@ -329,6 +336,14 @@ def is_product_found(warehouse, product_id):
 
 
 def limit_values_to_a_desired_product(warehouse, str_product_id):
+    """
+    Checks if a desired product is found in the warehouse dictionary. If the
+    product is found, prints all the information about it.
+    :param warehouse: dict, stores product_id-product_object pairs
+    :param str_product_id: str, the product_id of the desired product
+    :return: doesn't return anything (= returns None implicitely)
+    """
+
     product_id = 0
 
     try:
@@ -352,6 +367,12 @@ def limit_values_to_a_desired_product(warehouse, str_product_id):
 
 
 def change(warehouse, parameters):
+    """
+    Adds or subtracts the amount of a product from the warehouse.
+    :param warehouse: dict, stores product_id-product_object pairs
+    :param parameters: str, contains the amount to be processed
+    :return: doesn't return anything (= returns None implicitely)
+    """
 
     product_id = 0
     amount_of_change = 0
@@ -367,9 +388,8 @@ def change(warehouse, parameters):
     str_product_id = splitted_parameters[0]
     str_amount_of_change = splitted_parameters[1]
 
-    # Kokeilee muuntaa product-id:tä kokonaisluvuksi. Jos tämä epännostuu,
-    # kyseessä kelvoton product_id, sillä product_in:n tulee sisältää vain
-    # numeroita.
+    # Tries to convert product_id into an integer. If this fails,
+    # the product_id is invalid because it can only contain numbers.
     try:
         product_id = int(str_product_id)
 
@@ -380,9 +400,7 @@ def change(warehouse, parameters):
         return
 
 
-
-    # Jos change on muuttaminen kokonaisluvuksi ei onnistu, tulostetaan
-    # virheilmoitus
+    # An error is printed if change cannot be converted into an integer
     try:
         amount_of_change = int(str_amount_of_change)
 
