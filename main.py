@@ -353,14 +353,48 @@ def limit_values_to_a_desired_product(warehouse, str_product_id):
 
 def change(warehouse, parameters):
 
+    product_id = 0
+    amount_of_change = 0
+
     splitted_parameters = parameters.split()
 
-    product_id = int(splitted_parameters[0])
-    amount_of_change = int(splitted_parameters[1])
+    if len(splitted_parameters) != 2:
+        print(
+            f"Error: bad parameters '{parameters}' "
+            f"for change command.")
+        return
+
+    str_product_id = splitted_parameters[0]
+    str_amount_of_change = splitted_parameters[1]
+
+    # Kokeilee muuntaa product-id:tä kokonaisluvuksi. Jos tämä epännostuu,
+    # kyseessä kelvoton product_id, sillä product_in:n tulee sisältää vain
+    # numeroita.
+    try:
+        product_id = int(str_product_id)
+
+    except ValueError:
+        print(
+            f"Error: bad parameters '{parameters}' "
+            f"for change command.")
+        return
+
+
+
+    # Jos change on muuttaminen kokonaisluvuksi ei onnistu, tulostetaan
+    # virheilmoitus
+    try:
+        amount_of_change = int(str_amount_of_change)
+
+    except ValueError:
+        print(
+            f"Error: bad parameters '{parameters}' "
+            f"for change command.")
+        return
 
     if not is_product_found(warehouse, product_id):
-        print(f"Error: stock for '{product_id}' can not be changed as it does not "
-              f"exist.")
+        print(f"Error: stock for '{product_id}' can not be changed as it does "
+              f"not exist.")
         return
 
     for key, word in warehouse.items():
