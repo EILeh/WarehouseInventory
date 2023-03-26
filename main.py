@@ -115,8 +115,8 @@ class Product:
 
         self.__stock += amount
 
-    # TODO: Multiple methods need to be written here to allow
-    #       all the required commands to be implemented.
+    def get_stock_size(self):
+        return self.__stock
 
 
 def _read_lines_until(fd, last_line):
@@ -420,6 +420,62 @@ def change(warehouse, parameters):
             word.modify_stock_size(amount_of_change)
 
 
+
+def delete(warehouse, parameters):
+    product_id = 0
+    #stock_amount = 0
+
+#    splitted_parameters = parameters.split(" ", maxsplit=1)
+
+    # product_id = splitted_parameters[0]
+    #
+    #
+    # str_product_id = splitted_parameters[0]
+
+
+    # Tries to convert product_id into an integer. If this fails,
+    # the product_id is invalid because it can only contain numbers.
+    try:
+        product_id = int(parameters)
+
+    except ValueError:
+        print(f"Error: product '{parameters}' can not be deleted as it does "
+              f"not exist.")
+        return
+
+    # str_stock_amount = splitted_parameters[1]
+
+    # An error is printed if change cannot be converted into an integer
+    # try:
+    #     stock_amount = int(str_stock_amount)
+    #
+    # except ValueError:
+    #     print(f"CC Error: product '{product_id}' can not be deleted as it does "
+    #           f"not exist.")
+    #     return
+
+    if not is_product_found(warehouse, product_id):
+        print(f"Error: product '{product_id}' can not be deleted as it does "
+              f"not exist.")
+        return
+
+    # if not is_product_found(warehouse, product_id):
+    #     print(f"AA Error: product '{product_id}' can not be deleted as it does "
+    #           f"not exist.")
+    #     return
+
+    for key, value in warehouse.items():
+        if product_id == key:
+            if value.get_stock_size() > 0:
+                print(f"Error: product '{product_id}' can not be deleted as "
+                      f"stock remains.")
+                break
+
+            else:
+                warehouse.pop(key)
+                break
+
+
 def main():
     # filename = input("Enter database name: ")
 
@@ -478,9 +534,7 @@ def main():
             limit_values_to_a_desired_product(warehouse, parameters)
 
         elif "delete".startswith(command) and parameters != "":
-            # TODO: Implement delete command for removing
-            #       a product from the inventory.
-            ...
+            delete(warehouse, parameters)
 
         elif "change".startswith(command) and parameters != "":
             change(warehouse, parameters)
