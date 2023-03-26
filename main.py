@@ -25,12 +25,13 @@ class Product:
     This class represent a product i.e. an item available for sale.
     """
 
-    def __init__(self, code, name, category, price, stock):
+    def __init__(self, code, name, category, price, stock, original_price=0):
         self.__code = code
         self.__name = name
         self.__category = category
         self.__price = price
         self.__stock = stock
+        self.__original_price = original_price
 
         # TODO (MAYBE): You might want to add more attributes here. :) Ö == :0
 
@@ -121,7 +122,7 @@ class Product:
     def get_stock_size_for_two_products(self, other):
         return int(self.__stock)
 
-    def get_product_category(self, other):
+    def get_product_category(self, other=""):
         return self.__category
 
     def get_product_price(self, other):
@@ -136,6 +137,17 @@ class Product:
             return True
 
         return False
+
+    def set_product_on_sale(self, sale_percentage):
+
+        # Nollan antaminen alennusprosentiksi lopettaa käynnissä olevan
+        # alemyynnin
+        if sale_percentage == 0.0:
+            self.__price = self.__original_price
+
+        else:
+            self.__original_price = self.__price
+            self.__price = self.__price - ((sale_percentage/100) * self.__price)
 
 
 def _read_lines_until(fd, last_line):
@@ -513,14 +525,33 @@ def command_combine(warehouse, parameters):
     #     product_2_stock = value1.get_stock_size(product_2)
 
     for key, value in warehouse.items():
-        stock_product_2 = value.get_stock_size_for_two_products(product_2)
+        stock_product_2 = value.get_stock_size(value.get_stock_size(product_2))
         if value.get_product_category(product_1) == \
                 value.get_product_category(product_2):
             if value.get_product_price(product_1) == \
                     value.get_product_price(product_2):
+
                 value.modify_stock_size(stock_product_2)
                 #warehouse.pop(product_2)
                 break
+
+
+def command_sale(warehouse, parameters):
+
+    splitted_parameters = parameters.split()
+
+    product_category = splitted_parameters[0]
+    str_product_sale_percentage = splitted_parameters[1]
+    product_sale_percentage = float(str_product_sale_percentage)
+
+    i = 0
+
+    for key, value in warehouse.items():
+        if product_category == value.get_product_category():
+            value.set_product_on_sale(product_sale_percentage)
+            i += 1
+
+    print(f"Sale price set for {i} items.")
 
 
 def main():
@@ -592,9 +623,7 @@ def main():
             command_combine(warehouse, parameters)
 
         elif "sale".startswith(command) and parameters != "":
-            # TODO: Implement sale command which allows the user to set
-            #       a sale price for all the products in a specific category.
-            ...
+            command_sale(warehouse, parameters)
 
         else:
             print(f"Error: bad command line '{command_line}'.")
