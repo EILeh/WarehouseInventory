@@ -420,7 +420,6 @@ def change(warehouse, parameters):
             word.modify_stock_size(amount_of_change)
 
 
-
 def delete(warehouse, parameters):
     product_id = 0
     #stock_amount = 0
@@ -474,6 +473,14 @@ def delete(warehouse, parameters):
             else:
                 warehouse.pop(key)
                 break
+
+
+def low(warehouse):
+
+    for key, value in sorted(warehouse.items()):
+
+        if value.get_stock_size() < LOW_STOCK_LIMIT:
+            print(value)
 
 
 def main():
@@ -541,10 +548,7 @@ def main():
 
 
         elif "low".startswith(command) and parameters == "":
-            # TODO: Implement low command which can be used to
-            #       alert the user when the amount of items
-            #       drop below <LOW_STOCK_LIMIT> i.e. 30.
-            ...
+            low(warehouse)
 
         elif "combine".startswith(command) and parameters != "":
             # TODO: Implement combine command which allows
