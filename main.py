@@ -118,6 +118,25 @@ class Product:
     def get_stock_size(self):
         return self.__stock
 
+    def get_stock_size_for_two_products(self, other):
+        return int(self.__stock)
+
+    def get_product_category(self, other):
+        return self.__category
+
+    def get_product_price(self, other):
+        return self.__price
+
+    def combine_stock(self, other):
+        self.modify_stock_size(other.get_stock_size())
+
+    def compare_products(self, other):
+        if self.get_product_category() == other.get_product_category() and \
+                self.get_product_price() == other.get_product_price():
+            return True
+
+        return False
+
 
 def _read_lines_until(fd, last_line):
     """
@@ -334,8 +353,7 @@ def is_product_found(warehouse, product_id):
     return True
 
 
-
-def limit_values_to_a_desired_product(warehouse, str_product_id):
+def command_print_with_parameters(warehouse, str_product_id):
     """
     Checks if a desired product is found in the warehouse dictionary. If the
     product is found, prints all the information about it.
@@ -366,7 +384,7 @@ def limit_values_to_a_desired_product(warehouse, str_product_id):
             print(word)
 
 
-def change(warehouse, parameters):
+def command_change(warehouse, parameters):
     """
     Adds or subtracts the amount of a product from the warehouse.
     :param warehouse: dict, stores product_id-product_object pairs
@@ -399,7 +417,6 @@ def change(warehouse, parameters):
             f"for change command.")
         return
 
-
     # An error is printed if change cannot be converted into an integer
     try:
         amount_of_change = int(str_amount_of_change)
@@ -420,17 +437,16 @@ def change(warehouse, parameters):
             word.modify_stock_size(amount_of_change)
 
 
-def delete(warehouse, parameters):
+def command_delete(warehouse, parameters):
     product_id = 0
-    #stock_amount = 0
+    # stock_amount = 0
 
-#    splitted_parameters = parameters.split(" ", maxsplit=1)
+    #    splitted_parameters = parameters.split(" ", maxsplit=1)
 
     # product_id = splitted_parameters[0]
     #
     #
     # str_product_id = splitted_parameters[0]
-
 
     # Tries to convert product_id into an integer. If this fails,
     # the product_id is invalid because it can only contain numbers.
@@ -475,12 +491,36 @@ def delete(warehouse, parameters):
                 break
 
 
-def low(warehouse):
-
+def command_low(warehouse):
     for key, value in sorted(warehouse.items()):
 
         if value.get_stock_size() < LOW_STOCK_LIMIT:
             print(value)
+
+
+def command_print(warehouse):
+    for key, product in sorted(warehouse.items()):
+        print(product)
+
+
+def command_combine(warehouse, parameters):
+    splitted_parameters = parameters.split()
+    product_1 = int(splitted_parameters[0])
+    product_2 = int(splitted_parameters[1])
+    # product_2_stock = 0
+
+    # for key1, value1 in warehouse.items():
+    #     product_2_stock = value1.get_stock_size(product_2)
+
+    for key, value in warehouse.items():
+        stock_product_2 = value.get_stock_size_for_two_products(product_2)
+        if value.get_product_category(product_1) == \
+                value.get_product_category(product_2):
+            if value.get_product_price(product_1) == \
+                    value.get_product_price(product_2):
+                value.modify_stock_size(stock_product_2)
+                #warehouse.pop(product_2)
+                break
 
 
 def main():
@@ -532,28 +572,24 @@ def main():
             example_function_for_example_purposes(warehouse, parameters)
 
         elif "print".startswith(command) and parameters == "":
-
-            for key, product in sorted(warehouse.items()):
-                print(product)
+            command_print(warehouse)
 
         elif "print".startswith(command) and parameters != "":
 
-            limit_values_to_a_desired_product(warehouse, parameters)
+            command_print_with_parameters(warehouse, parameters)
 
         elif "delete".startswith(command) and parameters != "":
-            delete(warehouse, parameters)
+            command_delete(warehouse, parameters)
 
         elif "change".startswith(command) and parameters != "":
-            change(warehouse, parameters)
+            command_change(warehouse, parameters)
 
 
         elif "low".startswith(command) and parameters == "":
-            low(warehouse)
+            command_low(warehouse)
 
         elif "combine".startswith(command) and parameters != "":
-            # TODO: Implement combine command which allows
-            #       the combining of two products into one.
-            ...
+            command_combine(warehouse, parameters)
 
         elif "sale".startswith(command) and parameters != "":
             # TODO: Implement sale command which allows the user to set
