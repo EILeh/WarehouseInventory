@@ -119,21 +119,23 @@ class Product:
     def get_stock_size(self):
         return self.__stock
 
-    def get_stock_size_for_two_products(self, other):
-        return int(self.__stock)
-
-    def get_product_category(self, other=""):
+    def get_product_category(self):
         return self.__category
 
-    def get_product_price(self, other):
+    def get_product_price(self):
         return self.__price
 
     def combine_stock(self, other):
         self.modify_stock_size(other.get_stock_size())
 
-    def compare_products(self, other):
-        if self.get_product_category() == other.get_product_category() and \
-                self.get_product_price() == other.get_product_price():
+    def compare_product_categories(self, other):
+        if self.get_product_category() == other.get_product_category():
+            return True
+
+        return False
+
+    def compare_product_prices(self, other):
+        if self.get_product_price() == other.get_product_price():
             return True
 
         return False
@@ -517,23 +519,90 @@ def command_print(warehouse):
 
 def command_combine(warehouse, parameters):
     splitted_parameters = parameters.split()
-    product_1 = int(splitted_parameters[0])
-    product_2 = int(splitted_parameters[1])
-    # product_2_stock = 0
 
-    # for key1, value1 in warehouse.items():
-    #     product_2_stock = value1.get_stock_size(product_2)
+    product_id_1 = 0
+    product_id_2 = 0
+
+    if len(splitted_parameters) != 2:
+        print(
+            f"Error: bad command line 'combine {parameters}' "
+            f"for combine command.")
+        return
+
+    str_product_id_1 = splitted_parameters[0]
+    str_product_id_2 = splitted_parameters[1]
+
+    # Tries to convert product_id into an integer. If this fails,
+    # the product_id is invalid because it can only contain numbers.
+    try:
+        product_id_1 = int(str_product_id_1)
+
+    except ValueError:
+        print(
+            f"Error: bad parameters '{parameters}' "
+            f"for combine command.")
+        return
+
+    # An error is printed if change cannot be converted into an integer
+    try:
+        product_id_2 = int(str_product_id_2)
+
+    except ValueError:
+        print(
+            f"Error: bad parameters '{parameters}' "
+            f"for combine command.")
+        return
+
+    if not is_product_found(warehouse, product_id_1):
+        print(
+            f"Error: bad parameters '{parameters}' "
+            f"for combine command.")
+        return
+
+    if not is_product_found(warehouse, product_id_2):
+        print(
+            f"Error: bad parameters '{parameters}' "
+            f"for combine command.")
+        return
+
+    product_1_id = int(splitted_parameters[0])
+    product_2_id = int(splitted_parameters[1])
+
+    if product_1_id == product_2_id:
+        print(f"Error: bad parameters '{parameters}' "
+              f"for combine command.")
+        return
+
+    # Siirrä vertailut olion metodiksi.
+
+    # PUUTTUU: kategoriavertailu ja hintavertailu
 
     for key, value in warehouse.items():
-        stock_product_2 = value.get_stock_size(value.get_stock_size(product_2))
-        if value.get_product_category(product_1) == \
-                value.get_product_category(product_2):
-            if value.get_product_price(product_1) == \
-                    value.get_product_price(product_2):
+        # yksi = value.get_product_category(product_1_id)
+        # kaksi = value.get_product_category(product_2_id)
+        # if (yksi) == (kaksi):
 
-                value.modify_stock_size(stock_product_2)
-                #warehouse.pop(product_2)
-                break
+        if not warehouse[product_1_id]\
+                .compare_product_categories(warehouse[product_2_id]):
+                    print(f"Error: combining items of different categories "
+                          f"'{warehouse[product_1_id].get_product_category()}' "
+                          f"and "
+                          f"'{warehouse[product_2_id].get_product_category()}'")
+                    break
+
+        if not warehouse[product_1_id] \
+                .compare_product_prices(warehouse[product_2_id]):
+            print(f"Error: combining items with different prices "
+                  f"'{warehouse[product_1_id].get_product_price()}€' "
+                  f"and "
+                  f"'{warehouse[product_2_id].get_product_price()}€'")
+            break
+
+        else:
+            warehouse[product_1_id].modify_stock_size(
+                warehouse[product_2_id].get_stock_size())
+            warehouse.pop(product_2_id)
+            break
 
 
 def command_sale(warehouse, parameters):
