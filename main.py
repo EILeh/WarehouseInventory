@@ -8,6 +8,14 @@ Email:     eetu.kuittinen@tuni.fi
 StudentId: 151309919
 Name:      Elli Lehtimäki
 Email:     elli.i.lehtimaki@tuni.fi
+
+This program saves information about different products to a dictionary. This
+dictionary contains key-value pairs. The keys are product ID's and the values
+are objects that contain the rest of the information about the products. This
+data is read by parsing a text file which is formatted according to
+pre-determined rules.
+
+The program goes through a 
 """
 
 # +--------------------------------------------------------------+
@@ -25,13 +33,15 @@ class Product:
     This class represent a product i.e. an item available for sale.
     """
 
-    def __init__(self, code, name, category, price, stock, original_price=0):
+    def __init__(self, code, name, category, price, stock, original_price=0,
+                 has_price_been_changed=False):
         self.__code = code
         self.__name = name
         self.__category = category
         self.__price = price
         self.__stock = stock
         self.__original_price = original_price
+        self.__has_price_been_changed = False
 
         # TODO (MAYBE): You might want to add more attributes here. :) Ö == :0
 
@@ -142,14 +152,22 @@ class Product:
 
     def set_product_on_sale(self, sale_percentage):
 
+        # self.__original_price = self.__price
         # Nollan antaminen alennusprosentiksi lopettaa käynnissä olevan
         # alemyynnin
         if sale_percentage == 0.0:
             self.__price = self.__original_price
 
+        elif not self.__has_price_been_changed:
+            self.__has_price_been_changed = True
+            #self.__original_price = self.__price
+            self.__price = self.__price - (
+                        (sale_percentage / 100) * self.__price)
+
         else:
-            self.__original_price = self.__price
-            self.__price = self.__price - ((sale_percentage/100) * self.__price)
+            # self.__original_price = self.__price
+            self.__original_price = self.__original_price - (
+                        (sale_percentage / 100) * self.__original_price)
 
 
 def _read_lines_until(fd, last_line):
@@ -212,22 +230,6 @@ def read_database(filename):
 
     :param filename: str, name of the file to be read.
     :return: dict[int, Product] | None
-    """
-
-    # MUISTA POISTAA SEURAAVA KOMMENTTI!!!!!!!!
-    """
-    Tämä koodi lukee tiedoston nimeltä filename, joka sisältää tietoja tuotteista. 
-    Tiedoston oletetaan olevan UTF-8 -koodattu ja sen oletetaan sisältävän tuotetietoja, 
-    joita on eroteltu merkkijonoilla "BEGIN PRODUCT" ja "END PRODUCT". Koodi 
-    käsittelee kukin tuote blokkina, jossa kukin rivi edustaa yhtä tietoa tuotteesta. 
-    Tuotteen tietoja ovat "CODE", "NAME", "CATEGORY", "PRICE" ja "STOCK". Koodi 
-    yrittää parsia jokaisen tuotteen tiedot ja luoda niistä Product-olion, joka 
-    lisätään sanakirjaan nimeltä data. Sanakirjan avaimena käytetään tuotekoodia
-    ("CODE"). Koodi yrittää myös käsitellä virhetilanteita, kuten tiedoston avaamisen
-    epäonnistuminen (OSError) tai tiedostosta lukemisen aikana tapahtuvat virheet 
-    (ValueError). Jos mikään virheistä tapahtuu, koodi palauttaa None. Muussa 
-    tapauksessa koodi palauttaa sanakirjan data, joka sisältää kaikkien luettujen
-    tuotteiden tiedot.
     """
 
     data = {}
@@ -400,6 +402,12 @@ def command_print_with_parameters(warehouse, str_product_id):
 
 def command_change(warehouse, parameters):
     """
+
+    :param warehouse:
+    :param parameters:
+    :return:
+    """
+    """
     Adds or subtracts the amount of a product from the warehouse.
     :param warehouse: dict, stores product_id-product_object pairs
     :param parameters: str, contains the amount to be processed
@@ -452,6 +460,12 @@ def command_change(warehouse, parameters):
 
 
 def command_delete(warehouse, parameters):
+    """
+
+    :param warehouse:
+    :param parameters:
+    :return:
+    """
     product_id = 0
     # stock_amount = 0
 
@@ -506,6 +520,11 @@ def command_delete(warehouse, parameters):
 
 
 def command_low(warehouse):
+    """
+
+    :param warehouse:
+    :return:
+    """
     for key, value in sorted(warehouse.items()):
 
         if value.get_stock_size() < LOW_STOCK_LIMIT:
@@ -513,11 +532,22 @@ def command_low(warehouse):
 
 
 def command_print(warehouse):
+    """
+
+    :param warehouse:
+    :return:
+    """
     for key, product in sorted(warehouse.items()):
         print(product)
 
 
 def command_combine(warehouse, parameters):
+    """
+
+    :param warehouse:
+    :param parameters:
+    :return:
+    """
     splitted_parameters = parameters.split()
 
     product_id_1 = 0
@@ -587,15 +617,16 @@ def command_combine(warehouse, parameters):
                     print(f"Error: combining items of different categories "
                           f"'{warehouse[product_1_id].get_product_category()}' "
                           f"and "
-                          f"'{warehouse[product_2_id].get_product_category()}'")
+                          f"'"
+                          f"{warehouse[product_2_id].get_product_category()}'.")
                     break
 
         if not warehouse[product_1_id] \
                 .compare_product_prices(warehouse[product_2_id]):
             print(f"Error: combining items with different prices "
-                  f"'{warehouse[product_1_id].get_product_price()}€' "
+                  f"{warehouse[product_1_id].get_product_price()}€ "
                   f"and "
-                  f"'{warehouse[product_2_id].get_product_price()}€'")
+                  f"{warehouse[product_2_id].get_product_price()}€.")
             break
 
         else:
@@ -606,12 +637,25 @@ def command_combine(warehouse, parameters):
 
 
 def command_sale(warehouse, parameters):
+    """
+
+    :param warehouse:
+    :param parameters:
+    :return:
+    """
 
     splitted_parameters = parameters.split()
 
     product_category = splitted_parameters[0]
     str_product_sale_percentage = splitted_parameters[1]
-    product_sale_percentage = float(str_product_sale_percentage)
+    product_sale_percentage = 0.0
+
+    try:
+        product_sale_percentage = float(str_product_sale_percentage)
+
+    except ValueError:
+        print(f"Error: bad parameters '{parameters}' for sale command.")
+        return
 
     i = 0
 
@@ -624,9 +668,9 @@ def command_sale(warehouse, parameters):
 
 
 def main():
-    # filename = input("Enter database name: ")
+    filename = input("Enter database name: ")
 
-    filename = "simpleproducts.txt"
+    #filename = "simpleproducts.txt"
     # filename = "products.txt"
 
     warehouse = read_database(filename)
