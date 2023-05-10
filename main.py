@@ -14,8 +14,6 @@ dictionary contains key-value pairs. The keys are product ID's and the values
 are objects that contain the rest of the information about the products. This
 data is read by parsing a text file which is formatted according to
 pre-determined rules.
-
-The program goes through a 
 """
 
 # +--------------------------------------------------------------+
@@ -158,16 +156,31 @@ class Product:
         if sale_percentage == 0.0:
             self.__price = self.__original_price
 
-        elif not self.__has_price_been_changed:
-            self.__has_price_been_changed = True
-            #self.__original_price = self.__price
-            self.__price = self.__price - (
-                        (sale_percentage / 100) * self.__price)
+        # elif not self.__has_price_been_changed:
+        #     self.__has_price_been_changed = True
+        #     #self.__original_price = self.__price
+        #     self.__price = self.__price - (
+        #                 (sale_percentage / 100) * self.__price)
 
         else:
-            # self.__original_price = self.__price
-            self.__original_price = self.__original_price - (
+            if self.__has_price_been_changed == True:
+                self.__price = self.__original_price - (
                         (sale_percentage / 100) * self.__original_price)
+
+            else:
+                self.__original_price = self.__price
+                # self.__original_price = self.__price + (
+                #             (sale_percentage * 100) * sale_percentage)
+                self.__price = self.__original_price - (
+                            (sale_percentage / 100) * self.__original_price)
+                self.__has_price_been_changed = True
+
+
+                # self.__original_price = self.__price
+                # self.__original_price = self.__original_price - (
+                #             (sale_percentage / 100) * self.__original_price)
+
+
 
 
 def _read_lines_until(fd, last_line):
