@@ -1,13 +1,11 @@
 """
 COMP.CS.100 Ohjelmointi 1 / Programming 1
 
-StudentId: 150541820
-Name:      Eetu Kuittinen
-Email:     eetu.kuittinen@tuni.fi
+Writers of the program:
 
-StudentId: 151309919
-Name:      Elli Lehtimäki
-Email:     elli.i.lehtimaki@tuni.fi
+writer 1: ehkuitti
+
+writer 2: EILeh
 
 This program saves information about different products to a dictionary. This
 dictionary contains key-value pairs. The keys are product ID's and the values
