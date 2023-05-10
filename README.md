@@ -1,4 +1,4 @@
-Varastokirjanpito
+Warehouse Inventory
 
 This program saves information about different products to a dictionary. This
 dictionary contains key-value pairs. The keys are product ID's and the values
