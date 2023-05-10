@@ -14,6 +14,17 @@ dictionary contains key-value pairs. The keys are product ID's and the values
 are objects that contain the rest of the information about the products. This
 data is read by parsing a text file which is formatted according to
 pre-determined rules.
+<<<<<<< HEAD
+=======
+
+The program goes through the dictionary in a loop. It uses the Product ID:s to
+find appropriate values and go through the dictionaries behind them. The
+program can print information about stocks (compare them,
+tell their size etc.), do the same to product categories
+and set products on sale. The data is processed within
+the dictionary. The text file isn't used once it's been
+parsed into the dictionary for processing.
+>>>>>>> 825b09156b6ee425a6d8f3250abea260fda9e6f4
 """
 
 # +--------------------------------------------------------------+
@@ -69,10 +80,12 @@ class Product:
         return "\n".join(lines)
 
     def print_with_parameters(self, product_code):
+        """
+        Takes a product_code as a parameter and prints the attributes
+        of only that product. Doesn't return anything (= implicitly
+        returns a None)
+        """
 
-        # Halutaan tulostaa vain ne tiedot, jotka löytyvät product_coden "takaa"
-
-        # for product_code in
 
         lines = [
 
@@ -125,24 +138,50 @@ class Product:
         self.__stock += amount
 
     def get_stock_size(self):
+        """Returns the stock size of a product based on its product ID.
+        Doesn't take any external parameters, returns the value from
+        the object attributes to the caller."""
         return self.__stock
 
     def get_product_category(self):
+        """Returns the category of a product based on its product ID.
+        Doesn't take any external parameters, returns the value from
+        the object attributes to the caller."""
         return self.__category
 
     def get_product_price(self):
+        """Returns the price of a product based on its product ID.
+        Doesn't take any external parameters, returns the value from
+        the object attributes to the caller."""
         return self.__price
 
     def combine_stock(self, other):
+        """Takes another object as a parameter and uses the
+        modify_stock_size() method of the first object to combine
+        the stocks of the products."""
         self.modify_stock_size(other.get_stock_size())
 
     def compare_product_categories(self, other):
+        """Takes another object as a parameter. Uses the
+        get_product_category() method of both to return
+        the product categories and then compares them.
+        Returns a boolean to the caller based on whether
+        the comparison evaluates to True or False
+        (True = the same category, False = categories
+        are different)"""
         if self.get_product_category() == other.get_product_category():
             return True
 
         return False
 
     def compare_product_prices(self, other):
+        """Takes another object as a parameter. Uses the
+        get_product_price() method of both to return
+        the product prices and then compares them.
+        Returns a boolean to the caller based on whether
+        the comparison evaluates to True or False
+        (True = the same price, False = prices
+        are different)"""
         if self.get_product_price() == other.get_product_price():
             return True
 
@@ -388,7 +427,7 @@ def command_print_with_parameters(warehouse, str_product_id):
     product is found, prints all the information about it.
     :param warehouse: dict, stores product_id-product_object pairs
     :param str_product_id: str, the product_id of the desired product
-    :return: doesn't return anything (= returns None implicitely)
+    :return: doesn't return anything (= returns None implicitly)
     """
 
     product_id = 0
@@ -415,13 +454,8 @@ def command_print_with_parameters(warehouse, str_product_id):
 
 def command_change(warehouse, parameters):
     """
-
-    :param warehouse:
-    :param parameters:
-    :return:
-    """
-    """
     Adds or subtracts the amount of a product from the warehouse.
+
     :param warehouse: dict, stores product_id-product_object pairs
     :param parameters: str, contains the amount to be processed
     :return: doesn't return anything (= returns None implicitely)
@@ -474,10 +508,13 @@ def command_change(warehouse, parameters):
 
 def command_delete(warehouse, parameters):
     """
-
-    :param warehouse:
-    :param parameters:
-    :return:
+    The function deletes a product based on its product id.
+    Prints an error if the product isn't found or if the
+    parameters are invalid, i.e there are too many or too
+    little values given.
+    :param warehouse: dict, product_id-product_object pairs
+    :param parameters: str, the product to be deleted
+    :return: None (implicitly)
     """
     product_id = 0
     # stock_amount = 0
@@ -534,9 +571,9 @@ def command_delete(warehouse, parameters):
 
 def command_low(warehouse):
     """
-
-    :param warehouse:
-    :return:
+    Prints products whose stocks are below a critical limit.
+    :param warehouse: dict, product_id-product_object pairs
+    :return: None (implicitly)
     """
     for key, value in sorted(warehouse.items()):
 
@@ -546,9 +583,11 @@ def command_low(warehouse):
 
 def command_print(warehouse):
     """
-
-    :param warehouse:
-    :return:
+    Prints though the object dictionary. Prints
+    product ID's (key) and product_object
+    attributes (payload).
+    :param warehouse: dict, product_id-product_object pairs
+    :return: None (implicitly)
     """
     for key, product in sorted(warehouse.items()):
         print(product)
@@ -556,10 +595,16 @@ def command_print(warehouse):
 
 def command_combine(warehouse, parameters):
     """
-
-    :param warehouse:
-    :param parameters:
-    :return:
+    Uses the object comparison methods to
+    compare specified products. Checks if the
+    parameter amount is correct and tries to
+    convert product_id into an integer. Checks
+    also if both products are found. If
+    everything succeeds, combines the products
+    using their respective methods.
+    :param warehouse: dict, product_id-product_object pairs
+    :param parameters: str, includes the second product_id
+    :return: None (implicitly)
     """
     splitted_parameters = parameters.split()
 
@@ -616,14 +661,7 @@ def command_combine(warehouse, parameters):
               f"for combine command.")
         return
 
-    # Siirrä vertailut olion metodiksi.
-
-    # PUUTTUU: kategoriavertailu ja hintavertailu
-
     for key, value in warehouse.items():
-        # yksi = value.get_product_category(product_1_id)
-        # kaksi = value.get_product_category(product_2_id)
-        # if (yksi) == (kaksi):
 
         if not warehouse[product_1_id]\
                 .compare_product_categories(warehouse[product_2_id]):
@@ -651,10 +689,10 @@ def command_combine(warehouse, parameters):
 
 def command_sale(warehouse, parameters):
     """
-
-    :param warehouse:
-    :param parameters:
-    :return:
+    Sets a product on sale.
+    :param warehouse: dict, product_id-product_object pairs
+    :param parameters: str, includes the second product_id
+    :return: None (implicitly)
     """
 
     splitted_parameters = parameters.split()
@@ -663,6 +701,8 @@ def command_sale(warehouse, parameters):
     str_product_sale_percentage = splitted_parameters[1]
     product_sale_percentage = 0.0
 
+    # If sale percentage cannot be converted into a float,
+    # it includes letters and is thus invalid.
     try:
         product_sale_percentage = float(str_product_sale_percentage)
 
