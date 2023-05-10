@@ -14,8 +14,6 @@ dictionary contains key-value pairs. The keys are product ID's and the values
 are objects that contain the rest of the information about the products. This
 data is read by parsing a text file which is formatted according to
 pre-determined rules.
-<<<<<<< HEAD
-=======
 
 The program goes through the dictionary in a loop. It uses the Product ID:s to
 find appropriate values and go through the dictionaries behind them. The
@@ -24,7 +22,6 @@ tell their size etc.), do the same to product categories
 and set products on sale. The data is processed within
 the dictionary. The text file isn't used once it's been
 parsed into the dictionary for processing.
->>>>>>> 825b09156b6ee425a6d8f3250abea260fda9e6f4
 """
 
 # +--------------------------------------------------------------+
@@ -35,6 +32,9 @@ parsed into the dictionary for processing.
 
 
 LOW_STOCK_LIMIT = 30
+HUNDRED_PERCENTAGE = 100
+REQUIRED_AMOUNT_OF_PARAMETERS = 2
+MINIMUM_STOCK_LIMIT = 0
 
 
 class Product:
@@ -42,8 +42,7 @@ class Product:
     This class represent a product i.e. an item available for sale.
     """
 
-    def __init__(self, code, name, category, price, stock, original_price=0,
-                 has_price_been_changed=False):
+    def __init__(self, code, name, category, price, stock, original_price=0):
         self.__code = code
         self.__name = name
         self.__category = category
@@ -51,8 +50,6 @@ class Product:
         self.__stock = stock
         self.__original_price = original_price
         self.__has_price_been_changed = False
-
-        # TODO (MAYBE): You might want to add more attributes here. :) Ö == :0
 
     def __str__(self):
         """
@@ -85,8 +82,6 @@ class Product:
         of only that product. Doesn't return anything (= implicitly
         returns a None)
         """
-
-
         lines = [
 
             f"Code:     {self.__code}",
@@ -114,7 +109,6 @@ class Product:
         the automated tests since the read_database function will
         stop working correctly.
         """
-
         return self.__code == other.__code and \
                self.__name == other.__name and \
                self.__category == other.__category and \
@@ -134,92 +128,102 @@ class Product:
                        Both positive and negative values are accepted:
                        positive value increases the stock and vice versa.
         """
-
         self.__stock += amount
 
     def get_stock_size(self):
-        """Returns the stock size of a product based on its product ID.
+        """
+        Returns the stock size of a product based on its product ID.
         Doesn't take any external parameters, returns the value from
-        the object attributes to the caller."""
+        the object attributes to the caller.
+        """
         return self.__stock
 
     def get_product_category(self):
-        """Returns the category of a product based on its product ID.
+        """
+        Returns the category of a product based on its product ID.
         Doesn't take any external parameters, returns the value from
-        the object attributes to the caller."""
+        the object attributes to the caller.
+        """
         return self.__category
 
     def get_product_price(self):
-        """Returns the price of a product based on its product ID.
+        """
+        Returns the price of a product based on its product ID.
         Doesn't take any external parameters, returns the value from
-        the object attributes to the caller."""
+        the object attributes to the caller.
+        """
         return self.__price
 
     def combine_stock(self, other):
-        """Takes another object as a parameter and uses the
+        """
+        Takes another object as a parameter and uses the
         modify_stock_size() method of the first object to combine
-        the stocks of the products."""
+        the stocks of the products.
+        """
         self.modify_stock_size(other.get_stock_size())
 
     def compare_product_categories(self, other):
-        """Takes another object as a parameter. Uses the
+        """
+        Takes another object as a parameter. Uses the
         get_product_category() method of both to return
         the product categories and then compares them.
         Returns a boolean to the caller based on whether
         the comparison evaluates to True or False
         (True = the same category, False = categories
-        are different)"""
+        are different)
+        """
         if self.get_product_category() == other.get_product_category():
             return True
 
         return False
 
     def compare_product_prices(self, other):
-        """Takes another object as a parameter. Uses the
+        """
+        Takes another object as a parameter. Uses the
         get_product_price() method of both to return
         the product prices and then compares them.
         Returns a boolean to the caller based on whether
         the comparison evaluates to True or False
         (True = the same price, False = prices
-        are different)"""
+        are different)
+        """
         if self.get_product_price() == other.get_product_price():
             return True
 
         return False
 
     def set_product_on_sale(self, sale_percentage):
-
-        # self.__original_price = self.__price
-        # Nollan antaminen alennusprosentiksi lopettaa käynnissä olevan
-        # alemyynnin
+        """
+        Checks how much is the product's price lowered and lowers the
+        product's price.
+        :param sale_percentage: The percentage that the price is reduced by
+        from the product's original price.
+        """
+        # If zero is given as a sale_percentage, the ongoing sale is stopped.
         if sale_percentage == 0.0:
             self.__price = self.__original_price
 
-        # elif not self.__has_price_been_changed:
-        #     self.__has_price_been_changed = True
-        #     #self.__original_price = self.__price
-        #     self.__price = self.__price - (
-        #                 (sale_percentage / 100) * self.__price)
-
         else:
-            if self.__has_price_been_changed == True:
-                self.__price = self.__original_price - (
-                        (sale_percentage / 100) * self.__original_price)
+            # If the __has_price_been_changed value is true, the new sale
+            # percentage is taken from the original price, not the current
+            # price.
+            if self.__has_price_been_changed:
+                # Counts a new price for the product.
+                self.__price = self.__original_price - \
+                               ((sale_percentage / HUNDRED_PERCENTAGE) *
+                                self.__original_price)
 
             else:
+                # Stores the original price.
                 self.__original_price = self.__price
-                # self.__original_price = self.__price + (
-                #             (sale_percentage * 100) * sale_percentage)
-                self.__price = self.__original_price - (
-                            (sale_percentage / 100) * self.__original_price)
+
+                # Counts a new price for the product.
+                self.__price = self.__original_price - \
+                               ((sale_percentage / HUNDRED_PERCENTAGE) *
+                                self.__original_price)
+
+                # Sets the __has_price_been_changed value as True.
                 self.__has_price_been_changed = True
-
-
-                # self.__original_price = self.__price
-                # self.__original_price = self.__original_price - (
-                #             (sale_percentage / 100) * self.__original_price)
-
-
 
 
 def _read_lines_until(fd, last_line):
@@ -241,7 +245,6 @@ def _read_lines_until(fd, last_line):
     :param last_line: str, reads lines until <last_line> is found.
     :return: list[str] | None
     """
-
     lines = []
 
     while True:
@@ -283,7 +286,6 @@ def read_database(filename):
     :param filename: str, name of the file to be read.
     :return: dict[int, Product] | None
     """
-
     data = {}
 
     try:
@@ -297,18 +299,15 @@ def read_database(filename):
                 lines = _read_lines_until(fd, "END PRODUCT")
                 if lines is None:
                     print(
-                        f"Error: premature end of file while reading '{filename}'.")
+                        f"Error: premature end of file while reading "
+                        f"'{filename}'.")
                     return None
-
-                # print(f"TEST: {lines=}")
 
                 collected_product_info = {}
 
                 for line in lines:
                     keyword, value = line.split(
                         maxsplit=1)  # ValueError possible
-
-                    # print(f"TEST: {keyword=} {value=}")
 
                     if keyword in ("CODE", "STOCK"):
                         value = int(value)  # ValueError possible
@@ -327,7 +326,8 @@ def read_database(filename):
 
                 if len(collected_product_info) < 5:
                     print(
-                        f"Error: a product block is missing one or more data lines.")
+                        f"Error: a product block is missing one or "
+                        f"more data lines.")
                     return None
 
                 product_code = collected_product_info["CODE"]
@@ -342,15 +342,14 @@ def read_database(filename):
                                   price=product_price,
                                   stock=product_stock)
 
-                # print(product)
-
                 if product_code in data:
                     if product == data[product_code]:
                         data[product_code].modify_stock_size(product_stock)
 
                     else:
                         print(
-                            f"Error: product code '{product_code}' conflicting data.")
+                            f"Error: product code '{product_code}' "
+                            f"conflicting data.")
                         return None
 
                 else:
@@ -365,47 +364,6 @@ def read_database(filename):
         return None
 
 
-def example_function_for_example_purposes(warehouse, parameters):
-    """
-    This function is an example of how to deal with the extra
-    text user entered on the command line after the actual
-    command word.
-
-    :param warehouse: dict[int, Product], dict of all known products.
-    :param parameters: str, all the text that the user entered after the command word.
-    """
-
-    try:
-        # Let's try splitting the <parameters> string into two parts.
-        # Raises ValueError if there are more or less than exactly two
-        # values (in this case there should be one int and one float) in
-        # the <parameters> string.
-        code, number = parameters.split()
-
-        # First parameter was supposed to be a products code i.e. an integer
-        # and the second should be a float. If either of these assumptions fail
-        # ValueError will be raised.
-        code = int(code)
-        number = float(number)
-
-    except ValueError:
-        print(f"Error: bad parameters '{parameters}' for example command.")
-        return
-
-    # <code> should be an existing product code in the <warehouse>.
-    if code not in warehouse:
-        print(f"Error: unknown product code '{code}'.")
-        return
-
-    # All the errors were checked above, so everything should be
-    # smooth sailing from this point onward. Of course, the other
-    # commands might require more or less error/sanity checks, this
-    # is just a simple example.
-
-    print("Seems like everything is good.")
-    print(f"Parameters are: {code=} and {number=}.")
-
-
 def is_product_found(warehouse, product_id):
     """
     This function checks if a desired product is found in the warehouse
@@ -414,7 +372,6 @@ def is_product_found(warehouse, product_id):
     :param product_id: integer, the product_id of the desired product
     :return: boolean, the answer to the question "was product found"
     """
-
     if product_id not in warehouse:
         return False
 
@@ -429,9 +386,10 @@ def command_print_with_parameters(warehouse, str_product_id):
     :param str_product_id: str, the product_id of the desired product
     :return: doesn't return anything (= returns None implicitly)
     """
-
     product_id = 0
 
+    # Tries to change the string to integer, if it can't be done, raises a
+    # ValueError and returns to the caller.
     try:
         product_id = int(str_product_id)
 
@@ -441,12 +399,16 @@ def command_print_with_parameters(warehouse, str_product_id):
             f"not exist.")
         return
 
+    # If function is_product_found returns false, prints an error and returns
+    # to the caller.
     if not is_product_found(warehouse, product_id):
         print(
             f"Error: product '{product_id}' can not be printed as it does "
             f"not exist.")
         return
 
+    # Goes through the warehouse dictionary and tries to find a product based
+    # on a product ID. Prints product details if the product is found.
     for key, word in warehouse.items():
         if product_id == key:
             print(word)
@@ -458,22 +420,21 @@ def command_change(warehouse, parameters):
 
     :param warehouse: dict, stores product_id-product_object pairs
     :param parameters: str, contains the amount to be processed
-    :return: doesn't return anything (= returns None implicitely)
+    :return: doesn't return anything (= returns None implicitly)
     """
-
     product_id = 0
     amount_of_change = 0
 
-    splitted_parameters = parameters.split()
+    split_parameters = parameters.split()
 
-    if len(splitted_parameters) != 2:
+    if len(split_parameters) != REQUIRED_AMOUNT_OF_PARAMETERS:
         print(
             f"Error: bad parameters '{parameters}' "
             f"for change command.")
         return
 
-    str_product_id = splitted_parameters[0]
-    str_amount_of_change = splitted_parameters[1]
+    str_product_id = split_parameters[0]
+    str_amount_of_change = split_parameters[1]
 
     # Tries to convert product_id into an integer. If this fails,
     # the product_id is invalid because it can only contain numbers.
@@ -501,6 +462,9 @@ def command_change(warehouse, parameters):
               f"not exist.")
         return
 
+    # Goes through the warehouse dictionary and tries to find a product based
+    # on a product ID. Calls the method modify_stock_size to change the
+    # amount of stock of the current product.
     for key, word in warehouse.items():
         if product_id == key:
             word.modify_stock_size(amount_of_change)
@@ -517,14 +481,6 @@ def command_delete(warehouse, parameters):
     :return: None (implicitly)
     """
     product_id = 0
-    # stock_amount = 0
-
-    #    splitted_parameters = parameters.split(" ", maxsplit=1)
-
-    # product_id = splitted_parameters[0]
-    #
-    #
-    # str_product_id = splitted_parameters[0]
 
     # Tries to convert product_id into an integer. If this fails,
     # the product_id is invalid because it can only contain numbers.
@@ -536,30 +492,17 @@ def command_delete(warehouse, parameters):
               f"not exist.")
         return
 
-    # str_stock_amount = splitted_parameters[1]
-
-    # An error is printed if change cannot be converted into an integer
-    # try:
-    #     stock_amount = int(str_stock_amount)
-    #
-    # except ValueError:
-    #     print(f"CC Error: product '{product_id}' can not be deleted as it does "
-    #           f"not exist.")
-    #     return
-
     if not is_product_found(warehouse, product_id):
         print(f"Error: product '{product_id}' can not be deleted as it does "
               f"not exist.")
         return
 
-    # if not is_product_found(warehouse, product_id):
-    #     print(f"AA Error: product '{product_id}' can not be deleted as it does "
-    #           f"not exist.")
-    #     return
-
+    # Goes through the warehouse dictionary and tries to find a product based
+    # on a product ID. Calls the method get_stock_size to check that the
+    # stock isn't less than zero. Removes the product if its stock is empty.
     for key, value in warehouse.items():
         if product_id == key:
-            if value.get_stock_size() > 0:
+            if value.get_stock_size() > MINIMUM_STOCK_LIMIT:
                 print(f"Error: product '{product_id}' can not be deleted as "
                       f"stock remains.")
                 break
@@ -575,8 +518,10 @@ def command_low(warehouse):
     :param warehouse: dict, product_id-product_object pairs
     :return: None (implicitly)
     """
+    # Goes through the warehouse dictionary and tries to find a product based
+    # on a product ID. Calls the method get_stock_size to inform the user if
+    # the stock is less than 30 and prints the value.
     for key, value in sorted(warehouse.items()):
-
         if value.get_stock_size() < LOW_STOCK_LIMIT:
             print(value)
 
@@ -589,6 +534,8 @@ def command_print(warehouse):
     :param warehouse: dict, product_id-product_object pairs
     :return: None (implicitly)
     """
+    # Goes through the warehouse dictionary and tries to find a product based
+    # on a product ID. Prints the products.
     for key, product in sorted(warehouse.items()):
         print(product)
 
@@ -606,19 +553,19 @@ def command_combine(warehouse, parameters):
     :param parameters: str, includes the second product_id
     :return: None (implicitly)
     """
-    splitted_parameters = parameters.split()
+    split_parameters = parameters.split()
 
     product_id_1 = 0
     product_id_2 = 0
 
-    if len(splitted_parameters) != 2:
+    if len(split_parameters) != REQUIRED_AMOUNT_OF_PARAMETERS:
         print(
             f"Error: bad command line 'combine {parameters}' "
             f"for combine command.")
         return
 
-    str_product_id_1 = splitted_parameters[0]
-    str_product_id_2 = splitted_parameters[1]
+    str_product_id_1 = split_parameters[0]
+    str_product_id_2 = split_parameters[1]
 
     # Tries to convert product_id into an integer. If this fails,
     # the product_id is invalid because it can only contain numbers.
@@ -653,37 +600,50 @@ def command_combine(warehouse, parameters):
             f"for combine command.")
         return
 
-    product_1_id = int(splitted_parameters[0])
-    product_2_id = int(splitted_parameters[1])
+    product_id_1 = int(split_parameters[0])
+    product_id_2 = int(split_parameters[1])
 
-    if product_1_id == product_2_id:
+    if product_id_1 == product_id_2:
         print(f"Error: bad parameters '{parameters}' "
               f"for combine command.")
         return
 
+    # Goes through the warehouse dictionary and tries to find a product based
+    # on a product ID.
     for key, value in warehouse.items():
 
-        if not warehouse[product_1_id]\
-                .compare_product_categories(warehouse[product_2_id]):
-                    print(f"Error: combining items of different categories "
-                          f"'{warehouse[product_1_id].get_product_category()}' "
-                          f"and "
-                          f"'"
-                          f"{warehouse[product_2_id].get_product_category()}'.")
-                    break
-
-        if not warehouse[product_1_id] \
-                .compare_product_prices(warehouse[product_2_id]):
-            print(f"Error: combining items with different prices "
-                  f"{warehouse[product_1_id].get_product_price()}€ "
+        # Uses the product category comparison method to compare whether the
+        # product in question has the same category as the caller object.
+        if not warehouse[product_id_1] \
+                .compare_product_categories(warehouse[product_id_2]):
+            print(f"Error: combining items of different categories "
+                  f"'{warehouse[product_id_1].get_product_category()}' "
                   f"and "
-                  f"{warehouse[product_2_id].get_product_price()}€.")
+                  f"'"
+                  f"{warehouse[product_id_2].get_product_category()}'.")
+            break
+
+        # Uses the price comparison method to compare whether the
+        # product in question has the same price as the caller object.
+        if not warehouse[product_id_1] \
+                .compare_product_prices(warehouse[product_id_2]):
+            print(f"Error: combining items with different prices "
+                  f"{warehouse[product_id_1].get_product_price()}€ "
+                  f"and "
+                  f"{warehouse[product_id_2].get_product_price()}€.")
             break
 
         else:
-            warehouse[product_1_id].modify_stock_size(
-                warehouse[product_2_id].get_stock_size())
-            warehouse.pop(product_2_id)
+            # Calls the method modify_stock_size to combine the products'
+            # stocks together. Calls the method get_stock_size to get the
+            # stock size of a product from the index of product_id_2 in the
+            # warehouse dictionary. Once the value has been gotten, adds it to
+            # product_id_1's stock. Removes the product_id_2 from the
+            # warehouse dictionary.
+
+            warehouse[product_id_1].modify_stock_size(
+                warehouse[product_id_2].get_stock_size())
+            warehouse.pop(product_id_2)
             break
 
 
@@ -694,11 +654,10 @@ def command_sale(warehouse, parameters):
     :param parameters: str, includes the second product_id
     :return: None (implicitly)
     """
+    split_parameters = parameters.split()
 
-    splitted_parameters = parameters.split()
-
-    product_category = splitted_parameters[0]
-    str_product_sale_percentage = splitted_parameters[1]
+    product_category = split_parameters[0]
+    str_product_sale_percentage = split_parameters[1]
     product_sale_percentage = 0.0
 
     # If sale percentage cannot be converted into a float,
@@ -712,8 +671,13 @@ def command_sale(warehouse, parameters):
 
     i = 0
 
+    # Goes through the warehouse dictionary and tries to find a product based
+    # on a product ID. Calls the method get_product_category to check that
+    # the products to be combined have the same category.
     for key, value in warehouse.items():
         if product_category == value.get_product_category():
+            # Calls the method set_product_on_sale to set a new price for the
+            # product.
             value.set_product_on_sale(product_sale_percentage)
             i += 1
 
@@ -722,9 +686,6 @@ def command_sale(warehouse, parameters):
 
 def main():
     filename = input("Enter database name: ")
-
-    #filename = "simpleproducts.txt"
-    # filename = "products.txt"
 
     warehouse = read_database(filename)
     if warehouse is None:
@@ -745,34 +706,10 @@ def main():
         else:
             parameters = parameters[0]
 
-        # If you have trouble undestanding what the values
-        # in the variables <command> and <parameters> are,
-        # remove the '#' comment character from the next line.
-        #    print(f"TEST: {command=} {parameters=}")
-
-        if "example".startswith(command) and parameters != "":
-            """
-            'Example' is not an actual command in the program. It is
-            implemented only to allow you to get ideas how to handle
-            the contents of the variable <parameters>.
-
-            Example command expects user to enter two values after the
-            command name: an integer and a float:
-
-                Enter command: example 123456 1.23
-
-            In this case the variable <parameters> would refer to
-            the value "123456 1.23". In other words, everything that
-            was entered after the actual command name as a single string.
-            """
-
-            example_function_for_example_purposes(warehouse, parameters)
-
-        elif "print".startswith(command) and parameters == "":
+        if "print".startswith(command) and parameters == "":
             command_print(warehouse)
 
         elif "print".startswith(command) and parameters != "":
-
             command_print_with_parameters(warehouse, parameters)
 
         elif "delete".startswith(command) and parameters != "":
@@ -780,7 +717,6 @@ def main():
 
         elif "change".startswith(command) and parameters != "":
             command_change(warehouse, parameters)
-
 
         elif "low".startswith(command) and parameters == "":
             command_low(warehouse)
